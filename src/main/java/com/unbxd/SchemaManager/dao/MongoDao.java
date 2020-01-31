@@ -1,15 +1,13 @@
-package com.unbxd.SchemaManager.Dao;
+package com.unbxd.SchemaManager.dao;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import com.unbxd.SchemaManager.Models.Field;
-import com.unbxd.SchemaManager.Models.SiteSchema;
+import com.unbxd.SchemaManager.models.Field;
+import com.unbxd.SchemaManager.models.SiteSchema;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
@@ -18,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -27,10 +24,15 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 @Qualifier("Mongo")
 public class MongoDao implements Dao {
 
+    private MongoClient mongoClient;
+
+    public MongoDao(MongoClient mc){
+        this.mongoClient = mc;
+    }
+
     CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
-    MongoClient mongoClient = MongoClients.create();
     MongoDatabase database = mongoClient.getDatabase("SchemaManager").withCodecRegistry(pojoCodecRegistry);
 
     @Override

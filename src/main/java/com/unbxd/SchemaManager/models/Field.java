@@ -1,13 +1,11 @@
-package com.unbxd.SchemaManager.Models;
+package com.unbxd.SchemaManager.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
