@@ -4,7 +4,7 @@ import com.unbxd.SchemaManager.exceptions.DaoException;
 import com.unbxd.SchemaManager.models.Field;
 import com.unbxd.SchemaManager.models.SiteSchema;
 
-public interface Dao {
+public interface SchemaDao {
 
     public void addNewSchema(SiteSchema schema) throws DaoException;
     public SiteSchema getSchemaForSite(String siteKey) throws DaoException;

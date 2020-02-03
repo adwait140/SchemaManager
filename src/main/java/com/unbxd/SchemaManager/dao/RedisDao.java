@@ -7,15 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unbxd.SchemaManager.exceptions.DaoException;
 import com.unbxd.SchemaManager.models.Field;
 import com.unbxd.SchemaManager.models.SiteSchema;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
+import java.util.List;
 
-@Component
-@Qualifier("Redis")
-public class RedisDao implements Dao {
+public class RedisDao implements SchemaDao {
 
     private Jedis jedis;
 
@@ -23,7 +20,7 @@ public class RedisDao implements Dao {
         this.jedis = jedis;
     }
 
-    ObjectMapper mapper = new ObjectMapper();
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void addNewSchema(SiteSchema schema) throws DaoException {
@@ -33,7 +30,6 @@ public class RedisDao implements Dao {
         catch (JsonProcessingException e){
             throw new DaoException(500,"Unable to add schema due to error e :"+ e.getMessage());
         }
-
     }
 
     @Override
@@ -66,17 +62,17 @@ public class RedisDao implements Dao {
     public void updateFieldInSite(String siteKey, String fieldName, Field field) throws DaoException {
         try {
             SiteSchema schema = getSchemaForSite(siteKey);
-        Field[] fields = schema.getFields();
-        for (Field f : fields) {
-            if (f.getFieldname() == fieldName) {
-                f.setFieldname(fieldName);
-                f.setAutoSuggest(field.isAutoSuggest());
-                f.setMultiValue(field.isMultiValue());
-                f.setDataType(field.getDataType());
+            List<Field> fields = schema.getFields();
+            for (Field f : fields) {
+                if (f.getFieldname() == fieldName) {
+                    f.setFieldname(fieldName);
+                    f.setAutoSuggest(field.isAutoSuggest());
+                    f.setMultiValue(field.isMultiValue());
+                    f.setDataType(field.getDataType());
+                }
             }
-        }
-        schema.setFields(fields);
-        jedis.set(siteKey,mapper.writeValueAsString(schema));
+            schema.setFields(fields);
+            jedis.set(siteKey,mapper.writeValueAsString(schema));
         }
         catch (DaoException e){
             throw new DaoException(e.getStatus(),e.getMessage());

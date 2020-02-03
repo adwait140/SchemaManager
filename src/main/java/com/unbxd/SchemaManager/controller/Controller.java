@@ -1,33 +1,28 @@
 package com.unbxd.SchemaManager.controller;
 
-import com.unbxd.SchemaManager.exceptions.ControllerException;
+import com.unbxd.SchemaManager.exceptions.SchemaServiceException;
 import com.unbxd.SchemaManager.models.Field;
 import com.unbxd.SchemaManager.models.SiteSchema;
 import com.unbxd.SchemaManager.services.SchemaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 
-
-@RequestMapping("/")
+@RestController
+@RequestMapping("/api")
 public class Controller {
 
+    @Autowired
     private SchemaService serv;
 
-    @Inject
-    public Controller(SchemaService ss){
-        this.serv = ss;
-    }
-
-
     @RequestMapping(value = "/site/{siteKey}/schema", method = RequestMethod.POST)
-    public ResponseEntity addNewSchema(@PathVariable("siteKey") String siteKey, @RequestBody SiteSchema schema  ) throws ControllerException {
+    public ResponseEntity addNewSchema(@PathVariable("siteKey") String siteKey, @RequestBody SiteSchema schema  ) {
         try {
             serv.addNewSchema(schema);
             return ResponseEntity.status(200).body("success");
         }
-        catch (ControllerException e){
+        catch (SchemaServiceException e){
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
@@ -38,7 +33,7 @@ public class Controller {
             SiteSchema schema = serv.getSchemaForSite(siteKey);
             return ResponseEntity.status(200).body(schema);
         }
-        catch (ControllerException e){
+        catch (SchemaServiceException e){
             return  ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
@@ -49,7 +44,7 @@ public class Controller {
             Field field = serv.getFieldInSite(siteKey, fieldName);
             return ResponseEntity.status(200).body(field);
         }
-        catch (ControllerException e){
+        catch (SchemaServiceException e){
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
@@ -60,7 +55,7 @@ public class Controller {
             serv.updateFieldInSite(siteKey, fieldName, field);
             return ResponseEntity.status(200).body("Success");
         }
-        catch (ControllerException e) {
+        catch (SchemaServiceException e) {
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
@@ -71,7 +66,7 @@ public class Controller {
             serv.updateSchemaForSite(siteKey, schema);
             return ResponseEntity.status(200).body("success");
         }
-        catch (ControllerException e){
+        catch (SchemaServiceException e){
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
     }
@@ -82,7 +77,7 @@ public class Controller {
             serv.deleteSchemaForSite(siteKey);
             return ResponseEntity.status(200).body("success");
         }
-        catch (ControllerException e){
+        catch (SchemaServiceException e){
             return ResponseEntity.status(e.getStatus()).body(e.getMessage());
         }
 

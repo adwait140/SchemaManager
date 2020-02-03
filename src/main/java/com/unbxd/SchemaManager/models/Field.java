@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
-    public String dataType;
-    public boolean multiValue;
-    public boolean autoSuggest;
-    public String fieldname;
+    private String dataType;
+    private boolean multiValue;
+    private boolean autoSuggest;
+    private String fieldname;
 }

@@ -7,12 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class SchemaManager extends SpringBootServletInitializer {
+public class SchemaManager {
 
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new SchemaModule());
-        injector.getInstance(SchemaManager.class);
-        SpringApplication.run(SchemaManager.class);
+//        Injector injector = Guice.createInjector(new SchemaModule());
+//        injector.getInstance(SchemaManager.class);
+        SpringApplication.run(SchemaManager.class,args);
 
     }
 }

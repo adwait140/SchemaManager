@@ -1,10 +1,10 @@
 package com.unbxd.SchemaManager.exceptions;
 
-public class ControllerException extends Exception {
+public class SchemaServiceException extends Exception {
 
     private int status;
 
-    public ControllerException(int status,String message){
+    public SchemaServiceException(int status, String message){
         super(message);
         this.status = status;
     }
