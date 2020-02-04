@@ -2,36 +2,24 @@ package com.unbxd.SchemaManager.dao;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.name.Named;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoDatabase;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
-import redis.clients.jedis.Jedis;
-import com.unbxd.SchemaManager.models.SiteSchema;
-import com.unbxd.SchemaManager.models.Field;
 
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import java.util.Properties;
 
 public class DaoProvider implements Provider<SchemaDao> {
 
-    @Inject @Named("dbname")
-    private String dBName;
+    @Inject
+    private Properties props ;
 
     @Override
     public SchemaDao get(){
+        String dBName = props.getProperty("dbname");
+        System.out.println(dBName);
+        props.list(System.out);
         if ("Redis".equals(dBName)){
-            Jedis jedis = new Jedis("localhost");
-            return new RedisDao(jedis);
+            return new RedisDao(props.getProperty("redis.host"),Integer.parseInt(props.getProperty("redis.port")));
         }
         else{
-            MongoClient mongoClient = new MongoClient("localhost");
-            CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                    fromProviders(PojoCodecProvider.builder().register(Field.class).register(SiteSchema.class).automatic(true).build()));
-            MongoDatabase database = mongoClient.getDatabase("SchemaManager").withCodecRegistry(pojoCodecRegistry);
-            return new MongoDao(mongoClient,database);
+            return new MongoDao(props.getProperty("mongo.host"),Integer.parseInt(props.getProperty("mongo.port")),props.getProperty("mongo.dbname"));
         }
     }
 }

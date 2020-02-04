@@ -1,17 +1,17 @@
 package com.unbxd.SchemaManager;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 
-@SpringBootApplication
+@SpringBootApplication( exclude = {
+        MongoAutoConfiguration.class,
+        MongoDataAutoConfiguration.class
+})
 public class SchemaManager {
 
     public static void main(String[] args) {
-//        Injector injector = Guice.createInjector(new SchemaModule());
-//        injector.getInstance(SchemaManager.class);
         SpringApplication.run(SchemaManager.class,args);
 
     }

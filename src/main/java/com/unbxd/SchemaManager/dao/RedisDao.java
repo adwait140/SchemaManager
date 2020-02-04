@@ -1,6 +1,5 @@
 package com.unbxd.SchemaManager.dao;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +10,14 @@ import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 public class RedisDao implements SchemaDao {
 
     private Jedis jedis;
 
-    public RedisDao(Jedis jedis){
+    public RedisDao(String host, int port){
+        Jedis jedis = new Jedis(host,port);
         this.jedis = jedis;
     }
 
@@ -40,7 +41,10 @@ public class RedisDao implements SchemaDao {
             return schema;
         }
         catch (IOException e){
-            throw new DaoException(404,"Site "+ siteKey +" not found");
+            throw new DaoException(404,"some exception occered");
+        }
+        catch (Exception e){
+            throw new DaoException(500,"Unknown exception occured e : " + e.getLocalizedMessage());
         }
     }
 

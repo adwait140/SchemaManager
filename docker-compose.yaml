@@ -1,0 +1,31 @@
+version: "3"
+
+services :
+  mongo :
+    image : mongo:latest
+    ports:
+      - "27017:27017"
+
+  redis :
+    image : redis:latest
+    ports :
+      - "6379:6379"
+
+  schema-manager2:
+    image: schema-manager2:latest
+    links:
+      - mongo
+    depends_on:
+      - mongo
+    ports :
+      - 8081:8081
+
+  schema-manager1:
+    image: schema-manager1:latest
+    links:
+      - redis
+    depends_on:
+      - redis
+    ports :
+      - 8080:8080
+
