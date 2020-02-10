@@ -11,3 +11,9 @@ docker build --build-arg HOST=mongo \
 docker-compose up -d
 
 docker ps
+
+npm install frisby --save-dev
+
+npm install --save-dev jest
+
+jest test/integration-tests.js
