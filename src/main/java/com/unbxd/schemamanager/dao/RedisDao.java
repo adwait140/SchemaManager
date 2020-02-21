@@ -1,69 +1,78 @@
-package com.unbxd.SchemaManager.dao;
+package com.unbxd.schemamanager.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unbxd.SchemaManager.exceptions.DaoException;
-import com.unbxd.SchemaManager.models.Field;
-import com.unbxd.SchemaManager.models.SiteSchema;
+import com.mongodb.MongoQueryException;
+import com.unbxd.schemamanager.exceptions.*;
+import com.unbxd.schemamanager.models.Field;
+import com.unbxd.schemamanager.models.SiteSchema;
+import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 public class RedisDao implements SchemaDao {
 
     private Jedis jedis;
 
     public RedisDao(String host, int port){
-        Jedis jedis = new Jedis(host,port);
-        this.jedis = jedis;
+        try {
+            Jedis jedis = new Jedis(host, port);
+            this.jedis = jedis;
+        }
+        catch (JedisConnectionException e){
+            throw new TimeOutException(e);
+        }
     }
 
     private static ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void addNewSchema(SiteSchema schema) throws DaoException {
+    public void addNewSchema(SiteSchema schema)  {
+        if (jedis.exists(schema.getSiteKey()))
+                throw new DuplicateSiteKeyException();
         try {
             jedis.set(schema.getSiteKey(),mapper.writeValueAsString(schema));
         }
         catch (JsonProcessingException e){
-            throw new DaoException(500,"Unable to add schema due to error e :"+ e.getMessage());
+            throw new SchemaWriteException(e);
+        }
+        catch (Exception e){
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public SiteSchema getSchemaForSite(String siteKey) throws DaoException {
+    public SiteSchema getSchemaForSite(String siteKey)  {
         try {
             JsonNode jsonSchema = mapper.readTree(jedis.get(siteKey));
             SiteSchema schema = mapper.treeToValue(jsonSchema, SiteSchema.class);
             return schema;
         }
         catch (IOException e){
-            throw new DaoException(404,"some exception occered");
-        }
-        catch (Exception e){
-            throw new DaoException(500,"Unknown exception occured e : " + e.getLocalizedMessage());
+            throw new SiteNotFoundException(e);
         }
     }
 
     @Override
-    public void updateSchemaForSite(String siteKey, SiteSchema schema) throws DaoException {
+    public void updateSchemaForSite(String siteKey, SiteSchema schema)  {
         if (jedis.exists(siteKey)) {
             try {
                 jedis.set(schema.getSiteKey(), mapper.writeValueAsString(schema));
             }
             catch (JsonProcessingException e){
-                throw new DaoException(500,"Unable to update schema due to error e : "+ e.getMessage());
+                throw new SchemaWriteException(e);
             }
         }
         else
-            throw new DaoException(404,"Site "+ siteKey +" not found");
+            throw new SiteNotFoundException();
     }
 
     @Override
-    public void updateFieldInSite(String siteKey, String fieldName, Field field) throws DaoException {
+    public void updateFieldInSite(String siteKey, String fieldName, Field field)  {
         try {
             SiteSchema schema = getSchemaForSite(siteKey);
             List<Field> fields = schema.getFields();
@@ -78,20 +87,17 @@ public class RedisDao implements SchemaDao {
             schema.setFields(fields);
             jedis.set(siteKey,mapper.writeValueAsString(schema));
         }
-        catch (DaoException e){
-            throw new DaoException(e.getStatus(),e.getMessage());
-        }
         catch (JsonProcessingException e){
-            throw new DaoException(500,"Unable to update Site due to error e : " + e.getMessage());
+            throw new SchemaWriteException(e);
         }
     }
 
     @Override
-    public void deleteSchemaForSite(String siteKey) throws DaoException{
+    public void deleteSchemaForSite(String siteKey) {
         if (jedis.exists(siteKey)){
             jedis.del(siteKey);
         }
         else
-            throw new DaoException(404,"Site "+ siteKey +" not found");
+            throw new SiteNotFoundException();
     }
 }
