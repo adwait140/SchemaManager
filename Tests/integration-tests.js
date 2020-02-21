@@ -2,14 +2,14 @@ const frisby = require('frisby');
 
 describe("Check health",function(){
     it("Check if schema-manager1 service is alive",function(done){
-        return frisby.get("http://localhost:8080/api/monitor")
+        return frisby.get("http://localhost:8080/monitor")
             .expect('status',200)
             .expect('bodyContains',"alive")
             .done(done);
     });
 
     it("Check if schema-manager2 service is alive",function(done){
-        return frisby.get("http://localhost:8081/api/monitor")
+        return frisby.get("http://localhost:8081/monitor")
             .expect('status',200)
             .expect('bodyContains',"alive")
             .done(done);
@@ -19,7 +19,7 @@ describe("Check health",function(){
 
 describe("Check creating and reading schema for a site in redis",function(){
     it("Add schema for site new-site",function(done){
-        return frisby.post("http://localhost:8080/api/site/new-site/schema", {
+        return frisby.post("http://localhost:8080/site/new-site/schema", {
             siteKey: "new-site",
             fields: [
                 {
@@ -66,7 +66,7 @@ describe("Check creating and reading schema for a site in redis",function(){
     });
 
     it("Get schema for site",function(done){
-        frisby.get("http://localhost:8080/api/new-site/schema")
+        frisby.get("http://localhost:8080/new-site/schema")
             .expect('status',200)
             .expect('bodyContains',"new-site")
             .expect('bodyContains',"Occasion")
@@ -74,7 +74,7 @@ describe("Check creating and reading schema for a site in redis",function(){
     });
 
     it("Get field properties for fieldname",function(done){
-        frisby.get("http://localhost:8080/api/site/new-site/field/fabric")
+        frisby.get("http://localhost:8080/site/new-site/field/fabric")
             .expect('status',200)
             .expect('bodyContains',"fabric")
             .expect('bodyContains',"Text")
@@ -82,7 +82,7 @@ describe("Check creating and reading schema for a site in redis",function(){
     });
 
     it("Update field properties for fieldname", function(done){
-        frisby.post("http://localhost8080/api/site/new-site/field/occasion", {
+        frisby.post("http://localhost8080/site/new-site/field/occasion", {
             dataType: "Text",
             autoSuggest: false,
             multiValue: false,
@@ -94,7 +94,7 @@ describe("Check creating and reading schema for a site in redis",function(){
     });
 
     it("Delete Site ", function(done){
-        frisby.delete("http://localhost:8080/api/site/new-site")
+        frisby.delete("http://localhost:8080/site/new-site")
             .expect('status',200)
             .expect('bodyContains',success)
             .done(done);
@@ -103,7 +103,7 @@ describe("Check creating and reading schema for a site in redis",function(){
 
 describe("Check creating and reading schema for a site in mongo",function(){
     it("Add schema for site new-site",function(done){
-        return frisby.post("http://localhost:8081/api/site/new-site/schema", {
+        return frisby.post("http://localhost:8081/site/new-site/schema", {
             siteKey: "new-site",
             fields: [
                 {
@@ -150,7 +150,7 @@ describe("Check creating and reading schema for a site in mongo",function(){
     });
 
     it("Get schema for site",function(done){
-        frisby.get("http://localhost:8081/api/new-site/schema")
+        frisby.get("http://localhost:8081/new-site/schema")
             .expect('status',200)
             .expect('bodyContains',"new-site")
             .expect('bodyContains',"Occasion")
@@ -158,7 +158,7 @@ describe("Check creating and reading schema for a site in mongo",function(){
     });
 
     it("Get field properties for fieldname",function(done){
-        frisby.get("http://localhost:8081/api/site/new-site/field/fabric")
+        frisby.get("http://localhost:8081/site/new-site/field/fabric")
             .expect('status',200)
             .expect('bodyContains',"fabric")
             .expect('bodyContains',"Text")
@@ -166,7 +166,7 @@ describe("Check creating and reading schema for a site in mongo",function(){
     });
 
     it("Update field properties for fieldname", function(done){
-        frisby.post("http://localhost8081/api/site/new-site/field/occasion", {
+        frisby.post("http://localhost8081/site/new-site/field/occasion", {
             dataType: "Text",
             autoSuggest: false,
             multiValue: false,
@@ -178,7 +178,7 @@ describe("Check creating and reading schema for a site in mongo",function(){
     });
 
     it("Delete Site ", function(done){
-        frisby.delete("http://localhost:8081/api/site/new-site")
+        frisby.delete("http://localhost:8081/site/new-site")
             .expect('status',200)
             .expect('bodyContains',success)
             .done(done);

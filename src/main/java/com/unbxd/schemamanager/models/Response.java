@@ -1,7 +1,6 @@
-package com.unbxd.SchemaManager.models;
+package com.unbxd.schemamanager.models;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 

@@ -1,4 +1,4 @@
-package com.unbxd.SchemaManager;
+package com.unbxd.schemamanager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
